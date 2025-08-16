@@ -1,0 +1,6 @@
+[
+	{"name": "Nairobi Fresh Produce Market", "type": "Wholesaler", "region": "kenya", "region_scope": "national", "crops": ["Tomato", "Maize"], "contact": "+254-700-000-111"},
+	{"name": "Maharashtra Agro Traders", "type": "Aggregator", "region": "maharashtra, india", "region_scope": "state", "crops": ["Tomato", "Rice"], "contact": "+91-22-4000-1234"},
+	{"name": "Delhi Grain Exchange", "type": "Buyer", "region": "india", "region_scope": "national", "crops": ["Wheat", "Rice"], "contact": "+91-11-5555-8888"},
+	{"name": "Kenya Cereal Board", "type": "Parastatal", "region": "kenya", "region_scope": "national", "crops": ["Wheat", "Maize"], "contact": "+254-20-111-2222"}
+]
