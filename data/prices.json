@@ -1,0 +1,8 @@
+[
+	{"crop": "Tomato", "region": "kenya", "region_scope": "national", "currency": "KES", "price_per_tonne": 42000, "low": 38000, "high": 46000},
+	{"crop": "Tomato", "region": "maharashtra, india", "region_scope": "state", "currency": "INR", "price_per_tonne": 18000, "low": 15000, "high": 21000},
+	{"crop": "Wheat", "region": "kenya", "region_scope": "national", "currency": "KES", "price_per_tonne": 55000, "low": 50000, "high": 60000},
+	{"crop": "Wheat", "region": "india", "region_scope": "national", "currency": "INR", "price_per_tonne": 24000, "low": 22000, "high": 26000},
+	{"crop": "Maize", "region": "kenya", "region_scope": "national", "currency": "KES", "price_per_tonne": 35000, "low": 32000, "high": 38000},
+	{"crop": "Rice", "region": "india", "region_scope": "national", "currency": "INR", "price_per_tonne": 30000, "low": 26000, "high": 34000}
+]
