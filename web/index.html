@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Farmer Assistant</title>
+  <link rel="stylesheet" href="/ui/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>AI Farmer Assistant</h1>
+    <nav>
+      <button class="tab active" data-tab="diagnose">Diagnose Disease</button>
+      <button class="tab" data-tab="advice">Farming Advice</button>
+      <button class="tab" data-tab="market">Marketplace</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="diagnose" class="panel active">
+      <h2>Identify Crop Disease</h2>
+      <form id="diagnoseForm">
+        <input type="file" id="leafImage" accept="image/*" required />
+        <button type="submit">Analyze</button>
+      </form>
+      <div id="diagnoseResult" class="result"></div>
+    </section>
+
+    <section id="advice" class="panel">
+      <h2>Real-time Farming Advice</h2>
+      <form id="adviceForm">
+        <div class="grid">
+          <label>Crop
+            <select id="crop">
+              <option>tomato</option>
+              <option>potato</option>
+              <option>maize</option>
+              <option>wheat</option>
+              <option>rice</option>
+            </select>
+          </label>
+          <label>Growth Stage
+            <select id="growth_stage">
+              <option>nursery</option>
+              <option>vegetative</option>
+              <option>flowering</option>
+              <option>fruiting</option>
+              <option>maturity</option>
+            </select>
+          </label>
+          <label>Area (m²)
+            <input type="number" id="area_m2" value="50" step="1" />
+          </label>
+          <label>Soil Type
+            <select id="soil_type">
+              <option value="">(optional)</option>
+              <option>loam</option>
+              <option>sand</option>
+              <option>clay</option>
+              <option>silt</option>
+            </select>
+          </label>
+          <label>Soil pH
+            <input type="number" id="soil_ph" step="0.1" placeholder="e.g., 6.5" />
+          </label>
+          <label>Soil Moisture (%)
+            <input type="number" id="soil_moisture_pct" step="0.1" placeholder="e.g., 20" />
+          </label>
+          <label>Latitude
+            <input type="number" id="latitude" step="0.0001" placeholder="e.g., -1.29" />
+          </label>
+          <label>Longitude
+            <input type="number" id="longitude" step="0.0001" placeholder="e.g., 36.82" />
+          </label>
+        </div>
+        <button type="submit">Get Advice</button>
+      </form>
+      <div id="adviceResult" class="result"></div>
+    </section>
+
+    <section id="market" class="panel">
+      <h2>Marketplace</h2>
+      <div class="grid two">
+        <div>
+          <h3>Create Listing</h3>
+          <form id="listingForm">
+            <label>Seller Name <input id="seller_name" required /></label>
+            <label>Crop <input id="listing_crop" required /></label>
+            <label>Quantity (kg) <input type="number" id="quantity_kg" step="0.1" required /></label>
+            <label>Price per kg (USD) <input type="number" id="price_per_kg" step="0.01" required /></label>
+            <label>Region <input id="region" required /></label>
+            <label>Contact Info <input id="contact_info" required /></label>
+            <label>Description <input id="description" /></label>
+            <button type="submit">Post Listing</button>
+          </form>
+        </div>
+        <div>
+          <h3>Find Fair Price</h3>
+          <form id="priceForm">
+            <label>Crop <input id="price_crop" required /></label>
+            <label>Region (optional) <input id="price_region" /></label>
+            <button type="submit">Get Fair Price</button>
+          </form>
+          <div id="priceResult" class="result"></div>
+        </div>
+      </div>
+
+      <h3>Listings</h3>
+      <div id="listings"></div>
+    </section>
+  </main>
+
+  <script src="/ui/script.js"></script>
+</body>
+</html>

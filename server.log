@@ -1,0 +1,8 @@
+INFO:     Started server process [2778]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:46964 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33164 - "POST /api/advice/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33174 - "GET /api/market/fair_price?crop=tomato&region=Nairobi HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33176 - "GET /api/market/listings HTTP/1.1" 200 OK
