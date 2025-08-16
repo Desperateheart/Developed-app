@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Farmer Assistant</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #2d5016;
+            --secondary-green: #4a7c59;
+            --accent-orange: #ff8c00;
+            --light-green: #f0f8e8;
+            --text-dark: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--light-green) 0%, #ffffff 100%);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: linear-gradient(90deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+            color: white;
+            padding: 80px 0;
+            margin-bottom: 50px;
+        }
+
+        .feature-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--accent-orange);
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--accent-orange), #ff6b35);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 140, 0, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, var(--secondary-green), var(--primary-green));
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-weight: 600;
+        }
+
+        .upload-area {
+            border: 3px dashed var(--secondary-green);
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            background: rgba(240, 248, 232, 0.5);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: var(--accent-orange);
+            background: rgba(255, 140, 0, 0.1);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--accent-orange);
+            background: rgba(255, 140, 0, 0.2);
+        }
+
+        .result-card {
+            border-left: 5px solid var(--accent-orange);
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .confidence-bar {
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b35, var(--accent-orange));
+            transition: width 0.5s ease;
+        }
+
+        .section-title {
+            color: var(--primary-green);
+            font-weight: 700;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            width: 50px;
+            height: 3px;
+            background: var(--accent-orange);
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .loading {
+            display: none;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--accent-orange);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .crop-listing {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .crop-listing:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .price-tag {
+            background: linear-gradient(45deg, var(--accent-orange), #ff6b35);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .trend-up {
+            color: #28a745;
+        }
+
+        .trend-down {
+            color: #dc3545;
+        }
+
+        .trend-stable {
+            color: #6c757d;
+        }
+
+        .modal-header {
+            background: linear-gradient(90deg, var(--primary-green), var(--secondary-green));
+            color: white;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-orange);
+            box-shadow: 0 0 0 0.2rem rgba(255, 140, 0, 0.25);
+        }
+
+        .alert-success {
+            border-left: 5px solid #28a745;
+        }
+
+        .alert-warning {
+            border-left: 5px solid #ffc107;
+        }
+
+        .alert-danger {
+            border-left: 5px solid #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="fas fa-seedling me-2"></i>AI Farmer Assistant
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#disease-detection">Disease Detection</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#farming-advice">Farming Advice</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#marketplace">Marketplace</a>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#registerModal">
+                            <i class="fas fa-user-plus me-1"></i>Register
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-4">AI-Powered Farming Solutions</h1>
+            <p class="lead mb-5">Detect crop diseases, get expert advice, and connect with buyers - all in one place</p>
+            <div class="row justify-content-center">
+                <div class="col-md-4 mb-3">
+                    <div class="d-flex align-items-center justify-content-center">
+                        <i class="fas fa-camera feature-icon me-3"></i>
+                        <div>
+                            <h5 class="mb-1">Disease Detection</h5>
+                            <small>Upload crop photos for instant analysis</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="d-flex align-items-center justify-content-center">
+                        <i class="fas fa-brain feature-icon me-3"></i>
+                        <div>
+                            <h5 class="mb-1">Smart Advice</h5>
+                            <small>Get personalized farming recommendations</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="d-flex align-items-center justify-content-center">
+                        <i class="fas fa-handshake feature-icon me-3"></i>
+                        <div>
+                            <h5 class="mb-1">Fair Trading</h5>
+                            <small>Connect directly with buyers</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Disease Detection Section -->
+        <section id="disease-detection" class="mb-5">
+            <h2 class="section-title text-center">Crop Disease Detection</h2>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card feature-card">
+                        <div class="card-body p-4">
+                            <h5 class="card-title mb-3">
+                                <i class="fas fa-upload text-primary me-2"></i>Upload Crop Photo
+                            </h5>
+                            <div class="upload-area" id="uploadArea">
+                                <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                                <h6>Drag & Drop your crop image here</h6>
+                                <p class="text-muted">or click to browse files</p>
+                                <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+                            </div>
+                            <div class="mt-3">
+                                <input type="text" class="form-control mb-2" id="cropName" placeholder="Crop name (optional)">
+                                <button class="btn btn-primary w-100" id="analyzeBtn" disabled>
+                                    <i class="fas fa-microscope me-2"></i>Analyze Disease
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div id="diseaseResults" class="d-none">
+                        <div class="result-card">
+                            <h5><i class="fas fa-stethoscope text-danger me-2"></i>Analysis Results</h5>
+                            <div id="diseaseContent"></div>
+                        </div>
+                    </div>
+                    <div class="loading text-center" id="diseaseLoading">
+                        <div class="spinner"></div>
+                        <p>Analyzing your crop image...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Farming Advice Section -->
+        <section id="farming-advice" class="mb-5">
+            <h2 class="section-title text-center">Smart Farming Advice</h2>
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <div class="card feature-card">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-seedling feature-icon"></i>
+                            <h5 class="card-title">Planting Guide</h5>
+                            <p class="card-text">Get crop-specific planting recommendations</p>
+                            <button class="btn btn-success" onclick="getPlantingAdvice()">Get Advice</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <div class="card feature-card">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-calendar-alt feature-icon"></i>
+                            <h5 class="card-title">Seasonal Tips</h5>
+                            <p class="card-text">Season-specific farming recommendations</p>
+                            <button class="btn btn-success" onclick="getSeasonalAdvice()">View Tips</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <div class="card feature-card">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-tint feature-icon"></i>
+                            <h5 class="card-title">Irrigation Guide</h5>
+                            <p class="card-text">Optimize your watering schedule</p>
+                            <button class="btn btn-success" onclick="getIrrigationAdvice()">Learn More</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="adviceResults" class="d-none">
+                <div class="result-card">
+                    <h5><i class="fas fa-lightbulb text-warning me-2"></i>Farming Recommendations</h5>
+                    <div id="adviceContent"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Price Suggestion Section -->
+        <section id="price-suggestion" class="mb-5">
+            <h2 class="section-title text-center">Fair Price Calculator</h2>
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="card feature-card">
+                        <div class="card-body p-4">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Crop Type</label>
+                                    <select class="form-control" id="priceCrop">
+                                        <option value="">Select crop</option>
+                                        <option value="tomato">Tomato</option>
+                                        <option value="corn">Corn</option>
+                                        <option value="wheat">Wheat</option>
+                                        <option value="potato">Potato</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Quantity (kg)</label>
+                                    <input type="number" class="form-control" id="priceQuantity" placeholder="Enter quantity">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Quality Grade</label>
+                                    <select class="form-control" id="priceQuality">
+                                        <option value="standard">Standard</option>
+                                        <option value="premium">Premium</option>
+                                        <option value="fair">Fair</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary w-100" onclick="calculatePrice()">
+                                <i class="fas fa-calculator me-2"></i>Calculate Fair Price
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="priceResults" class="d-none mt-4">
+                <div class="result-card">
+                    <h5><i class="fas fa-dollar-sign text-success me-2"></i>Price Recommendation</h5>
+                    <div id="priceContent"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Marketplace Section -->
+        <section id="marketplace" class="mb-5">
+            <h2 class="section-title text-center">Farmer-Buyer Marketplace</h2>
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="card feature-card">
+                        <div class="card-body p-4">
+                            <h5 class="card-title">
+                                <i class="fas fa-plus-circle text-success me-2"></i>List Your Crops
+                            </h5>
+                            <p class="text-muted">Connect with buyers and get fair prices for your produce</p>
+                            <button class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#listCropModal">
+                                List Crops for Sale
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="card feature-card">
+                        <div class="card-body p-4">
+                            <h5 class="card-title">
+                                <i class="fas fa-search text-primary me-2"></i>Find Fresh Produce
+                            </h5>
+                            <p class="text-muted">Browse available crops from local farmers</p>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" id="searchCrop" placeholder="Search crops...">
+                                <button class="btn btn-primary" onclick="searchCrops()">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="cropListings" class="row">
+                <!-- Crop listings will be populated here -->
+            </div>
+        </section>
+    </div>
+
+    <!-- Registration Modal -->
+    <div class="modal fade" id="registerModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Register</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs mb-3" id="registerTabs">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#farmerTab">Farmer</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#buyerTab">Buyer</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="farmerTab">
+                            <form id="farmerForm">
+                                <div class="mb-3">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" name="name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" name="email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Phone</label>
+                                    <input type="tel" class="form-control" name="phone">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Location</label>
+                                    <input type="text" class="form-control" name="location">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Farm Size (acres)</label>
+                                    <input type="number" class="form-control" name="farm_size" step="0.1">
+                                </div>
+                                <button type="submit" class="btn btn-success w-100">Register as Farmer</button>
+                            </form>
+                        </div>
+                        <div class="tab-pane fade" id="buyerTab">
+                            <form id="buyerForm">
+                                <div class="mb-3">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" name="name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Company</label>
+                                    <input type="text" class="form-control" name="company">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" name="email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Phone</label>
+                                    <input type="tel" class="form-control" name="phone">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Location</label>
+                                    <input type="text" class="form-control" name="location">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Crop Preferences</label>
+                                    <textarea class="form-control" name="crop_preferences" rows="3" placeholder="e.g., Organic vegetables, Fruits, Grains"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Register as Buyer</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- List Crop Modal -->
+    <div class="modal fade" id="listCropModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">List Your Crop</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="listCropForm">
+                        <div class="mb-3">
+                            <label class="form-label">Farmer ID</label>
+                            <input type="number" class="form-control" name="farmer_id" required>
+                            <small class="text-muted">Enter your farmer ID from registration</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Crop Name</label>
+                            <input type="text" class="form-control" name="crop_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Quantity (kg)</label>
+                            <input type="number" class="form-control" name="quantity" step="0.1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Price per Unit ($)</label>
+                            <input type="number" class="form-control" name="price_per_unit" step="0.01">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Quality Grade</label>
+                            <select class="form-control" name="quality_grade">
+                                <option value="standard">Standard</option>
+                                <option value="premium">Premium</option>
+                                <option value="fair">Fair</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Harvest Date</label>
+                            <input type="date" class="form-control" name="harvest_date">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Location</label>
+                            <input type="text" class="form-control" name="location">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" name="description" rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">List Crop</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/app.js"></script>
+</body>
+</html>
